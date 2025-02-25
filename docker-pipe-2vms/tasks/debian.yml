@@ -2,31 +2,36 @@
   apt:
     name: apt-transport-https
     state: present
-
+  when: ansible_host != "35.209.191.170"
 - name: Install Docker
   apt:
     name: docker.io
     state: present
+  when: ansible_host != "35.209.191.170"
 
 - name: Start and enable Docker
   service:
     name: docker
     state: started
     enabled: yes
+  when: ansible_host != "35.209.191.170"
 
 - name: Install Apache (apache2)
   apt:
     name: apache2
     state: present
+  when: ansible_host != "35.209.191.170"
 
 - name: Start and enable Apache
   service:
     name: apache2
     state: started
     enabled: yes
+  when: ansible_host != "35.209.191.170"
 
 - name: Copy index.html
   copy:
     src: files/index.html
     dest: /var/www/html/index.html
+  when: ansible_host != "35.209.191.170"
 
