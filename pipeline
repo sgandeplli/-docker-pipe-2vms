@@ -71,6 +71,14 @@ pipeline {
                 '''
             }
         }
+       stage ("check connection"){
+       steps{
+        sh '''
+            ansible-inventory --graph
+            ansible all -m ping
+            '''
+       }
+       }
 
         stage("Ansible Deployment") {
             steps {
