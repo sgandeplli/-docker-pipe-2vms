@@ -1,39 +1,51 @@
-- name: Install prerequisites for Docker
+
+- name: Install prerequisites for Docker (CentOS)
   yum:
     name: yum-utils
     state: present
-    
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
-- name: Install Docker
+- name: Install Docker (CentOS)
   yum:
     name: docker
     state: present
-  when: ansible_host != "35.209.191.170"
-  
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
-- name: Start and enable Docker
+- name: Start and enable Docker (CentOS)
   service:
     name: docker
     state: started
     enabled: yes
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
-- name: Install Apache (httpd)
+- name: Install Apache (httpd) (CentOS)
   yum:
     name: httpd
     state: present
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
-- name: Start and enable Apache
+- name: Start and enable Apache (CentOS)
   service:
     name: httpd
     state: started
     enabled: yes
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
-- name: Copy index.html
+- name: Copy index.html (CentOS)
   copy:
     src: files/index.html
     dest: /var/www/html/index.html
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
