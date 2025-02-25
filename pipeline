@@ -1,82 +1,71 @@
-pipeline{
+pipeline {
     agent any
-    environment{
-         IMAGE_NAME = "python-nginx-vms"
+    environment {
+        IMAGE_NAME = "python-nginx-vms"
         ARTIFACT_REPO = "us-central1-docker.pkg.dev/mythic-inn-420620/my-docker-repo1"
         GOOGLE_APPLICATION_CREDENTIALS = credentials('gcp')
     }
-    stages{
-        stage ("docker hub connection"){
-            steps{
-            withCredentials(usernamePassword[(credentialsId: 'docker-hub',
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-            )]){
-                sh '''
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                '''
-            }
-
-        }
-
-        }
-        stage ("google cloud login"){
+    stages {
+        stage("Docker Hub Connection") {
             steps {
-                sh """
-                 gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', 
+                                                  usernameVariable: 'DOCKER_USER', 
+                                                  passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage("Google Cloud Login") {
+            steps {
+                sh '''
+                gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
                 gcloud auth configure-docker us-central1-docker.pkg.dev
-        
-                """
-            }
-        }
-
-        stage ( " run compose file"){
-            steps{
-                sh '''
-
-                docker compose build
-
-                '''
-            }
-
-        }
-        stage ("docker tags"){
-            steps{
-                sh '''
-                
-                docker tag pyweb1 ganesh6498/pyweb1:${BUILD_NUMBER}
-               
-                docker push ganesh6498/pyweb1:${BUILD_NUMBER}
-                docker tag pyweb1 ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:${BUILD_NUMBER}
-                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}:${BUILD_NUMBER}
-
                 '''
             }
         }
-        stage ("push web2"){
+
+        stage("Run Docker Compose") {
             steps {
-                '''
-                 docker tag web2 ganesh6498/web2:${BUILD_NUMBER}
-                 docker push ganesh6498/web2:${BUILD_NUMBER}
-                 docker tag web2 ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:${BUILD_NUMBER}
-                 docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:${BUILD_NUMBER}
-
-
-
-                 
-                
+                sh '''
+                docker compose build
                 '''
             }
         }
-        stage (" ansible starts"){
-            steps{
-                sh ''' 
-                ansible-playbook ansibleplay.yml 
 
+        stage("Docker Tags & Push (Python App)") {
+            steps {
+                sh '''
+                docker tag pyweb1 ganesh6498/pyweb1:${BUILD_NUMBER}
+                docker push ganesh6498/pyweb1:${BUILD_NUMBER}
+
+                docker tag pyweb1 ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:${BUILD_NUMBER}
+                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:${BUILD_NUMBER}
                 '''
             }
         }
-        
-        
+
+        stage("Docker Tags & Push (Web App)") {
+            steps {
+                sh '''
+                docker tag web2 ganesh6498/web2:${BUILD_NUMBER}
+                docker push ganesh6498/web2:${BUILD_NUMBER}
+
+                docker tag web2 ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:${BUILD_NUMBER}
+                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:${BUILD_NUMBER}
+                '''
+            }
+        }
+
+        stage("Ansible Deployment") {
+            steps {
+                sh '''
+                ansible-playbook ansibleplay.yml
+                '''
+            }
+        }
     }
 }
+
