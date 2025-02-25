@@ -1,37 +1,50 @@
-- name: Install prerequisites for Docker
+- name: Install prerequisites for Docker (Debian)
   apt:
     name: apt-transport-https
     state: present
-  when: ansible_host != "35.209.191.170"
-- name: Install Docker
+    update_cache: yes
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
+
+- name: Install Docker (Debian)
   apt:
     name: docker.io
     state: present
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
 
-- name: Start and enable Docker
+- name: Start and enable Docker (Debian)
   service:
     name: docker
     state: started
     enabled: yes
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
 
-- name: Install Apache (apache2)
+- name: Install Apache (apache2) (Debian)
   apt:
     name: apache2
     state: present
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
 
-- name: Start and enable Apache
+- name: Start and enable Apache (Debian)
   service:
     name: apache2
     state: started
     enabled: yes
-  when: ansible_host != "35.209.191.170"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
 
-- name: Copy index.html
+- name: Copy index.html (Debian)
   copy:
     src: files/index.html
     dest: /var/www/html/index.html
-  when: ansible_host != "35.209.191.170"
-
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
