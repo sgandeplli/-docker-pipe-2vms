@@ -76,7 +76,7 @@
     - ansible_host != "35.209.191.170"
 
 - name: run container
-  command: docker run -it -d -p 8082:8080 ganesh6498/pyweb1:{{ build_number }}
+  command: docker run -it -d -p 5001:5000 ganesh6498/pyweb1:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
