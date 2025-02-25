@@ -1,51 +1,43 @@
-
-- name: Install prerequisites for Docker (CentOS)
+---
+- name: Install prerequisites for Docker
   yum:
     name: yum-utils
     state: present
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
+- name: add repo docker
+  shell: yum config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo # here it was tell if no creates the only shell cmd execute
+  when:
+    - ansible_host != "35.209.191.170"
+    - ansible_os_family == "RedHat"
 
-- name: Install Docker (CentOS)
+
+- name: Install Docker
   yum:
-    name: docker
+    name: "{{ item }}"
+
     state: present
+
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Start and enable Docker (CentOS)
+
+- name: Start and enable Docker
   service:
     name: docker
     state: started
     enabled: yes
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_host != "35.209.191.170"
 
-- name: Install Apache (httpd) (CentOS)
+- name: Install Apache (httpd)
   yum:
     name: httpd
     state: present
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_host != "35.209.191.170"
-
-- name: Start and enable Apache (CentOS)
-  service:
-    name: httpd
-    state: started
-    enabled: yes
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_host != "35.209.191.170"
-
-- name: Copy index.html (CentOS)
-  copy:
-    src: files/index.html
-    dest: /var/www/html/index.html
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_host != "35.209.191.170"
 
