@@ -10,7 +10,10 @@
 
 - name: Install Docker
   apt:
-    name: docker.io
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
     state: present
   when:
     - ansible_os_family == "Debian"
