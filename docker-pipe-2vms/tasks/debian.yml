@@ -1,13 +1,14 @@
-- name: Install prerequisites for Docker (Debian)
+---
+- name: Install prerequisites for Docker
   apt:
     name: apt-transport-https
     state: present
-    update_cache: yes
   when:
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
 
-- name: Install Docker (Debian)
+
+- name: Install Docker
   apt:
     name: docker.io
     state: present
@@ -15,7 +16,7 @@
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
 
-- name: Start and enable Docker (Debian)
+- name: Start and enable Docker
   service:
     name: docker
     state: started
@@ -24,7 +25,7 @@
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
 
-- name: Install Apache (apache2) (Debian)
+- name: Install Apache (apache2)
   apt:
     name: apache2
     state: present
@@ -32,7 +33,7 @@
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
 
-- name: Start and enable Apache (Debian)
+- name: Start and enable Apache
   service:
     name: apache2
     state: started
@@ -41,10 +42,28 @@
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
 
-- name: Copy index.html (Debian)
+
+- name: Copy index.html
   copy:
     src: files/index.html
     dest: /var/www/html/index.html
   when:
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
+- name: get buildnumber
+  debug:
+    msg: " {{build_number}}"
+
+- name: take image from docker hub
+  command: docker pull ganesh6498/web1:{{ build_number }}
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
+
+
+- name: run container
+  command: docker run -it -d -p 8082:8080 ganesh6498/web1:{{ build_number }}
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_host != "35.209.191.170"
+
