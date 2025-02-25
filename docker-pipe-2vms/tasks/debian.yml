@@ -55,7 +55,7 @@
     msg: " {{build_number}}"
 
 - name: take image from docker hub
-  command: docker pull ganesh6498/web1:{{ build_number }}
+  command: docker pull ganesh6498/web2:{{ build_number }}
   when:
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
