@@ -1,0 +1,7 @@
+---
+# tasks file for docker-pipe-2vms
+
+- name : include task
+  include_tasks:
+    - docker-pipe-2vms/tasks/centos.yml
+    - docker-pipe-2vms/tasks/debian.yml

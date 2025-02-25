@@ -1,0 +1,12 @@
+services:
+  pyapp1:
+    build: ./python
+    image: pyweb1
+    ports:
+      - '5001:5000'
+  htmlapp1:
+    build: ./html
+    image: web2
+    ports:
+      - '81:80'
+
