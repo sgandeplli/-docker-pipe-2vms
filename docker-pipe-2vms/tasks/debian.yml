@@ -62,7 +62,7 @@
 
 
 - name: run container
-  command: docker run -it -d -p 8082:8080 ganesh6498/web2:{{ build_number }}
+  command: docker run -it -d -p 82:80 ganesh6498/web2:{{ build_number }}
   when:
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
