@@ -75,10 +75,19 @@ pipeline {
        steps{
         sh '''
             ansible-inventory --graph
-            ansible all -m ping
+            
             '''
        }
        }
+       stage (" ping ansible"){
+           steps{
+           sh ''' 
+                  sleep 5
+              ansible all -m ping
+              '''
+            }
+       }
+  
 
         stage("Ansible Deployment") {
             steps {
