@@ -9,7 +9,7 @@ locals {
 resource "google_compute_instance" "int" {
     for_each = toset(local.names)
     name = "dude-${each.key}"
-    machine_type = "e2-micro"
+    machine_type = "e2-medium"
 
     boot_disk {
       initialize_params {
