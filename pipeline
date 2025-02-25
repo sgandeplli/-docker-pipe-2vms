@@ -92,7 +92,7 @@ pipeline {
         stage("Ansible Deployment") {
             steps {
                 sh '''
-                ansible-playbook ansibleplay.yml
+                ansible-playbook ansibleplay.yml -e build_number=$BUILD_NUMBER
                 '''
             }
         }
