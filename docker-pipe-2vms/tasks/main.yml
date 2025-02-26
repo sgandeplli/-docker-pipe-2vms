@@ -3,57 +3,37 @@
 
 
 
-
-- name: install package docker
-  shell : |
-    apt-get install ca-certificates curl
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-    sudo apt-get update
-  when:
-    - ansible_os_family == "Debian"
-    - ansible_host != "35.209.191.170"
-
-  ignore_errors: true
-
-- name: Install Docker (Debian)
-  command: sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  when:
-    - ansible_os_family == "Debian"
-    - ansible_host != "35.209.191.170"
-  ignore_errors: true
-
-- name: Install prerequisites for Docker (RedHat)
+---
+- name: Install prerequisites for Docker
   yum:
     name: yum-utils
     state: present
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
-
-- name: Add Docker repository (RedHat)
+- name: add repo docker
   shell: yum config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
   args:
-    creates: /etc/yum.repos.d/docker-ce.repo
+    creates: /etc/yum.repos.d/docker-ce.repo # here it was tell if no creates the only shell cmd execute
+  when:
+    - ansible_host != "35.209.191.170"
+    - ansible_os_family == "RedHat"
+
+
+- name: Install Docker
+  yum:
+    name: "{{ item }}"
+
+    state: present
+
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Install Docker (RedHat)
-  yum:
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-    state: present
-  when:
-    - ansible_os_family == "RedHat"
-    - ansible_host != "35.209.191.170"
 
 - name: Start and enable Docker
   service:
@@ -61,15 +41,7 @@
     state: started
     enabled: yes
 
-- name: Install Apache (Debian)
-  apt:
-    name: apache2
-    state: present
-  when:
-    - ansible_os_family == "Debian"
-    - ansible_host != "35.209.191.170"
-
-- name: Install Apache (RedHat)
+- name: Install Apache (httpd)
   yum:
     name: httpd
     state: present
@@ -77,16 +49,7 @@
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Start and enable Apache (Debian)
-  service:
-    name: apache2
-    state: started
-    enabled: yes
-  when:
-    - ansible_os_family == "Debian"
-    - ansible_host != "35.209.191.170"
-
-- name: Start and enable Apache (RedHat)
+- name: Start and enable Apache
   service:
     name: httpd
     state: started
@@ -95,41 +58,41 @@
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Copy index.html to Apache web root
+
+- name: Copy index.html
   copy:
     src: files/index.html
     dest: /var/www/html/index.html
   when:
-    - ansible_os_family in ["Debian", "RedHat"]
+    - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Get build number
+- name: get buildnumber
   debug:
-    msg: "{{ build_number }}"
+    msg: " {{build_number}}"
   when:
-    - ansible_os_family in ["Debian", "RedHat"]
+    - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Pull Docker image from Docker Hub (Debian)
-  command: docker pull ganesh6498/web2:{{ build_number }}
-  when:
-    - ansible_os_family == "Debian"
-    - ansible_host != "35.209.191.170"
-
-- name: Pull Docker image from Docker Hub (RedHat)
+- name: take image from docker hub
   command: docker pull ganesh6498/pyweb1:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Run Docker container (Debian)
-  command:  docker run -it -d -p 82:80 ganesh6498/web2:{{ build_number }}
+- name: run container
+  command: docker run -it -d -p 5001:5000 ganesh6498/pyweb1:{{ build_number }}
   when:
-    - ansible_os_family == "Debian"
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
+- name: take image from docker hub
+  command: docker pull ganesh6498/web2:{{ build_number }}
+  when:
+    - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: Run Docker container (RedHat)
-  command: docker run -it -d -p 5001:5000 ganesh6498/pyweb1:{{ build_number }}
+- name: run container
+  command: docker run -it -d -p 85:80 ganesh6498/web2:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
