@@ -86,6 +86,7 @@
   when:
     - ansible_os_family == "Debian"
     - ansible_host != "35.209.191.170"
+  ignore_errors: true
 
 - name: Get build number
   debug:
