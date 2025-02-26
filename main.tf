@@ -13,7 +13,7 @@ resource "google_compute_instance" "int" {
 
     boot_disk {
       initialize_params {
-        image = each.key == "instance2" ? "debian-cloud/debian-12" : "centos-cloud/centos-stream-9"
+        image = "centos-cloud/centos-stream-9"
       }
     }
 
