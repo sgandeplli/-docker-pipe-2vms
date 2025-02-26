@@ -82,7 +82,7 @@ pipeline {
        stage (" ping ansible"){
            steps{
            sh ''' 
-                  sleep 5
+                  sleep 10
               ansible all -m ping
               '''
             }
