@@ -1,7 +1,3 @@
----
-# tasks file for docker-pipe-2vms
-
-
 
 ---
 - name: Install prerequisites for Docker
@@ -11,29 +7,25 @@
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
-- name: add repo docker
+
+- name: Add Docker repository
   shell: yum config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
   args:
-    creates: /etc/yum.repos.d/docker-ce.repo # here it was tell if no creates the only shell cmd execute
+    creates: /etc/yum.repos.d/docker-ce.repo
   when:
-    - ansible_host != "35.209.191.170"
     - ansible_os_family == "RedHat"
-
+    - ansible_host != "35.209.191.170"
 
 - name: Install Docker
   yum:
-    name: "{{ item }}"
-
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
     state: present
-
-  loop:
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
-
 
 - name: Start and enable Docker
   service:
@@ -58,7 +50,6 @@
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-
 - name: Copy index.html
   copy:
     src: files/index.html
@@ -67,31 +58,32 @@
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: get buildnumber
+- name: Get build number
   debug:
-    msg: " {{build_number}}"
+    msg: "{{ build_number }}"
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: take image from docker hub
+- name: Pull Docker image for pyweb1
   command: docker pull ganesh6498/pyweb1:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: run container
+- name: Run pyweb1 container
   command: docker run -it -d -p 5001:5000 ganesh6498/pyweb1:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
-- name: take image from docker hub
+
+- name: Pull Docker image for web2
   command: docker pull ganesh6498/web2:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
     - ansible_host != "35.209.191.170"
 
-- name: run container
+- name: Run web2 container
   command: docker run -it -d -p 85:80 ganesh6498/web2:{{ build_number }}
   when:
     - ansible_os_family == "RedHat"
