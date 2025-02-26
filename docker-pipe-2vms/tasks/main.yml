@@ -32,6 +32,9 @@
     name: docker
     state: started
     enabled: yes
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_host != "35.209.191.170"
 
 - name: Install Apache (httpd)
   yum:
