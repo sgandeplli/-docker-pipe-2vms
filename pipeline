@@ -6,6 +6,12 @@ pipeline {
         GOOGLE_APPLICATION_CREDENTIALS = credentials('gcp')
     }
     stages {
+
+        stage("pull the code){
+            steps{
+            git url: "https://github.com/sgandeplli/-docker-pipe-2vms.git" , branch: "main"
+            }
+        }
         stage("Docker Hub Connection") {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', 
