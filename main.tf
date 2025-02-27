@@ -1,6 +1,6 @@
 provider "google" {
  
-  project = "mythic-inn-420620"
+  project = "aswini-447207"
   zone = "us-central1-a"
 }
 locals {
