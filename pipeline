@@ -7,7 +7,7 @@ pipeline {
     }
     stages {
 
-        stage("pull the code){
+        stage("pull the code"){
             steps{
             git url: "https://github.com/sgandeplli/-docker-pipe-2vms.git" , branch: "main"
             }
