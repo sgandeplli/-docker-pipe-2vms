@@ -57,11 +57,11 @@ pipeline {
         stage("Docker Tags & Push (Python App)") {
             steps {
                 sh '''
-                docker tag pyweb1 ganesh6498/pyweb1:${BUILD_NUMBER}
-                docker push ganesh6498/pyweb1:${BUILD_NUMBER}
+                docker tag pyweb1 ganesh6498/pyweb1:"${BUILD_NUMBER}-a"
+                docker push ganesh6498/pyweb1:"${BUILD_NUMBER}-a"
 
-                docker tag pyweb1 ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:${BUILD_NUMBER}
-                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:${BUILD_NUMBER}
+                docker tag pyweb1 ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:"${BUILD_NUMBER}-a"
+                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-pyweb1:"${BUILD_NUMBER}-a"
                 '''
             }
         }
@@ -69,11 +69,11 @@ pipeline {
         stage("Docker Tags & Push (Web App)") {
             steps {
                 sh '''
-                docker tag web2 ganesh6498/web2:${BUILD_NUMBER}
-                docker push ganesh6498/web2:${BUILD_NUMBER}
+                docker tag web2 ganesh6498/web2:"${BUILD_NUMBER}-a"
+                docker push ganesh6498/web2:"${BUILD_NUMBER}-a"
 
-                docker tag web2 ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:${BUILD_NUMBER}
-                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:${BUILD_NUMBER}
+                docker tag web2 ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:"${BUILD_NUMBER}-a"
+                docker push ${ARTIFACT_REPO}/${IMAGE_NAME}-web2:"${BUILD_NUMBER}-a"
                 '''
             }
         }
@@ -98,7 +98,7 @@ pipeline {
         stage("Ansible Deployment") {
             steps {
                 sh '''
-                ansible-playbook ansibleplay.yml -e build_number=$BUILD_NUMBER
+                ansible-playbook ansibleplay.yml -e build_number="${BUILD_NUMBER}-a"
                 '''
             }
         }
