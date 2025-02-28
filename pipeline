@@ -85,16 +85,21 @@ pipeline {
             '''
        }
        }
-       stage (" ping ansible"){
-           steps{
-           sh ''' 
-                  sleep 10
-              ansible all -m ping
-              '''
-            }
-       }
-  
+     stage('Ping with Ansible') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
+                    sh '''
+                    # Ensure the SSH private key is available
+                    mkdir -p ~/.ssh
+                    echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+                    chmod 600 ~/.ssh/id_rsa
 
+                    # Run the Ansible ping command
+                    ansible all -m ping
+                    '''
+                }
+            }
+        }
         stage("Ansible Deployment") {
             steps {
                 sh '''
