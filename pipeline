@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         IMAGE_NAME = "python-nginx-vms"
-        ARTIFACT_REPO = "us-central1-docker.pkg.dev/mythic-inn-420620/my-docker-repo1"
+        ARTIFACT_REPO = "us-central1-docker.pkg.dev/aswini-447207/gcf-artifacts"
         GOOGLE_APPLICATION_CREDENTIALS = credentials('gcp')
     }
     stages {
